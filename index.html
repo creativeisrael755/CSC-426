@@ -1,27 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Calculator — CSC426</title>
+  <title>Log In — CSC426</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600&family=Inter:wght@400;500;600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:        #0f1117;
-      --surface:   #1a1d27;
-      --surface2:  #22263a;
-      --border:    #2d3148;
-      --text:      #e8eaf0;
-      --muted:     #6b7280;
-      --amber:     #f59e0b;
-      --amber-dim: #78460a;
-      --blue:      #3b82f6;
-      --red:       #ef4444;
-      --green:     #22c55e;
-      --radius:    14px;
+      --bg:        #f0f4f8;
+      --card:      #ffffff;
+      --teal:      #0d9488;
+      --teal-dark: #0f766e;
+      --teal-light:#ccfbf1;
+      --text:      #0f172a;
+      --sub:       #475569;
+      --muted:     #94a3b8;
+      --border:    #e2e8f0;
+      --error:     #ef4444;
+      --error-bg:  #fef2f2;
+      --success:   #16a34a;
+      --success-bg:#f0fdf4;
+      --radius:    12px;
     }
 
     body {
@@ -30,363 +32,562 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-family: 'Inter', sans-serif;
+      font-family: 'Plus Jakarta Sans', sans-serif;
       color: var(--text);
       padding: 20px;
     }
 
-    .wrapper {
+    /* Background pattern */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% -10%, rgba(13,148,136,0.12) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 40% at 90% 90%, rgba(13,148,136,0.07) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .page {
       width: 100%;
-      max-width: 380px;
+      max-width: 440px;
+      position: relative;
     }
 
-    .label-top {
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.15em;
-      color: var(--muted);
-      text-transform: uppercase;
-      margin-bottom: 14px;
-      padding-left: 2px;
-    }
-
-    .calc {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      overflow: hidden;
-      box-shadow: 0 24px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.03);
-    }
-
-    /* Display */
-    .display {
-      padding: 24px 22px 18px;
-      background: var(--bg);
-      border-bottom: 1px solid var(--border);
-      min-height: 110px;
+    /* Brand mark */
+    .brand {
       display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-      gap: 6px;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 28px;
+      justify-content: center;
     }
 
-    .display-expr {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 13px;
-      color: var(--muted);
-      min-height: 18px;
-      word-break: break-all;
-      text-align: right;
-      transition: color 0.2s;
-    }
-
-    .display-main {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 38px;
-      font-weight: 300;
-      color: var(--text);
-      text-align: right;
-      word-break: break-all;
-      line-height: 1;
-      transition: transform 0.15s ease, opacity 0.15s ease;
-    }
-
-    .display-main.flash {
-      transform: scale(0.96);
-      opacity: 0.6;
-    }
-
-    /* Buttons grid */
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 1px;
-      background: var(--border);
-    }
-
-    .btn {
-      background: var(--surface);
-      border: none;
-      color: var(--text);
-      font-family: 'Inter', sans-serif;
-      font-size: 16px;
-      font-weight: 500;
-      padding: 0;
-      height: 68px;
-      cursor: pointer;
-      transition: background 0.12s, transform 0.1s, color 0.12s;
+    .brand-icon {
+      width: 36px;
+      height: 36px;
+      background: var(--teal);
+      border-radius: 9px;
       display: flex;
       align-items: center;
       justify-content: center;
-      user-select: none;
-      position: relative;
-      overflow: hidden;
     }
 
-    .btn:active { transform: scale(0.94); }
+    .brand-icon svg { width: 18px; height: 18px; }
 
-    .btn:hover { background: var(--surface2); }
-
-    /* Button variants */
-    .btn-op {
-      color: var(--amber);
-      font-size: 20px;
-      background: rgba(245,158,11,0.06);
+    .brand-name {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.02em;
     }
-    .btn-op:hover { background: rgba(245,158,11,0.13); }
 
-    .btn-eq {
-      background: var(--amber);
-      color: #0f1117;
+    /* Card */
+    .card {
+      background: var(--card);
+      border-radius: 18px;
+      padding: 40px 40px 36px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.04), 0 20px 50px rgba(0,0,0,0.08);
+      border: 1px solid rgba(255,255,255,0.8);
+    }
+
+    h1 {
       font-size: 22px;
-      font-weight: 600;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      color: var(--text);
+      margin-bottom: 6px;
     }
-    .btn-eq:hover { background: #f3a820; }
-    .btn-eq:active { background: #d97706; }
 
-    .btn-clear {
-      color: var(--red);
-      font-size: 15px;
-      font-weight: 600;
-      letter-spacing: 0.04em;
-      background: rgba(239,68,68,0.06);
+    .subhead {
+      font-size: 14px;
+      color: var(--sub);
+      margin-bottom: 32px;
     }
-    .btn-clear:hover { background: rgba(239,68,68,0.13); }
 
-    .btn-zero { grid-column: span 2; }
-
-    .btn-back {
-      color: var(--blue);
-      font-size: 20px;
+    /* Floating label fields */
+    .field {
+      position: relative;
+      margin-bottom: 20px;
     }
-    .btn-back:hover { background: rgba(59,130,246,0.1); }
 
-    .btn-pow {
-      color: var(--green);
-      font-size: 15px;
-      font-weight: 600;
-    }
-    .btn-pow:hover { background: rgba(34,197,94,0.08); }
-
-    /* Ripple */
-    .ripple {
+    .field label {
       position: absolute;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.12);
-      transform: scale(0);
-      animation: ripple-anim 0.4s linear;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 14px;
+      color: var(--muted);
+      pointer-events: none;
+      transition: all 0.2s cubic-bezier(0.4,0,0.2,1);
+      background: var(--card);
+      padding: 0 4px;
+      z-index: 1;
+    }
+
+    .field input {
+      width: 100%;
+      padding: 16px 16px 14px;
+      font-size: 15px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 500;
+      color: var(--text);
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      appearance: none;
+    }
+
+    /* Password field with toggle */
+    .field-pw input { padding-right: 48px; }
+
+    .pw-toggle {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      padding: 4px;
+      transition: color 0.2s;
+    }
+    .pw-toggle:hover { color: var(--teal); }
+    .pw-toggle svg { width: 18px; height: 18px; }
+
+    .field input:focus {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 3px rgba(13,148,136,0.1);
+    }
+
+    .field input:focus + label,
+    .field input:not(:placeholder-shown) + label {
+      top: 0;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--teal);
+      letter-spacing: 0.04em;
+    }
+
+    /* Error state */
+    .field.has-error input {
+      border-color: var(--error);
+      box-shadow: 0 0 0 3px rgba(239,68,68,0.1);
+    }
+    .field.has-error label { color: var(--error) !important; }
+
+    .field-error {
+      font-size: 12px;
+      color: var(--error);
+      margin-top: 6px;
+      padding-left: 4px;
+      display: none;
+      align-items: center;
+      gap: 4px;
+    }
+    .field-error.visible { display: flex; }
+
+    /* Toast / Alert */
+    .alert {
+      padding: 14px 16px;
+      border-radius: var(--radius);
+      font-size: 14px;
+      font-weight: 500;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 22px;
+      display: none;
+      animation: slide-down 0.3s ease;
+    }
+
+    .alert.show { display: flex; }
+
+    .alert-icon { flex-shrink: 0; margin-top: 1px; }
+    .alert-icon svg { width: 18px; height: 18px; }
+
+    .alert.success {
+      background: var(--success-bg);
+      border: 1px solid #bbf7d0;
+      color: var(--success);
+    }
+
+    .alert.error {
+      background: var(--error-bg);
+      border: 1px solid #fecaca;
+      color: var(--error);
+    }
+
+    @keyframes slide-down {
+      from { opacity: 0; transform: translateY(-8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Remember me */
+    .remember {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+
+    .remember input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--teal);
+      cursor: pointer;
+    }
+
+    .remember label {
+      font-size: 13.5px;
+      color: var(--sub);
+      cursor: pointer;
+    }
+
+    /* Buttons */
+    .btn-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 15px 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      border-radius: var(--radius);
+      border: none;
+      cursor: pointer;
+      transition: all 0.18s;
+    }
+
+    .btn-login {
+      background: var(--teal);
+      color: white;
+      flex: 2;
+    }
+    .btn-login:hover { background: var(--teal-dark); box-shadow: 0 4px 16px rgba(13,148,136,0.3); }
+    .btn-login:active { transform: scale(0.98); }
+
+    .btn-login.loading {
+      opacity: 0.7;
       pointer-events: none;
     }
-    @keyframes ripple-anim {
-      to { transform: scale(4); opacity: 0; }
+
+    .btn-reset {
+      background: var(--bg);
+      color: var(--sub);
+      border: 1.5px solid var(--border);
+    }
+    .btn-reset:hover { background: #e8eef5; color: var(--text); }
+
+    /* Spinner */
+    .spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255,255,255,0.4);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      margin-right: 8px;
+      vertical-align: -3px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Divider */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 24px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
     }
 
-    /* Footer */
-    .foot {
-      padding: 12px 20px;
-      font-size: 10px;
-      color: var(--border);
+    .signup-link {
       text-align: center;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
+      margin-top: 14px;
+      font-size: 13.5px;
+      color: var(--sub);
+    }
+    .signup-link a {
+      color: var(--teal);
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .signup-link a:hover { text-decoration: underline; }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      margin-top: 22px;
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+    }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+      .card { padding: 32px 24px 28px; }
+      h1 { font-size: 20px; }
     }
   </style>
 </head>
 <body>
-  <div class="wrapper">
-    <div class="label-top">CSC426 — Calculator</div>
-    <div class="calc">
+  <div class="page">
 
-      <div class="display">
-        <div class="display-expr" id="expr"></div>
-        <div class="display-main" id="display">0</div>
+    <div class="brand">
+      <div class="brand-icon">
+        <!-- Lock icon -->
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
       </div>
-
-      <div class="grid">
-        <!-- Row 1 -->
-        <button class="btn btn-clear" data-action="clear">C</button>
-        <button class="btn btn-back" data-action="back">⌫</button>
-        <button class="btn btn-pow" data-action="op" data-val="^">xʸ</button>
-        <button class="btn btn-op" data-action="op" data-val="%">%</button>
-
-        <!-- Row 2 -->
-        <button class="btn" data-action="num" data-val="7">7</button>
-        <button class="btn" data-action="num" data-val="8">8</button>
-        <button class="btn" data-action="num" data-val="9">9</button>
-        <button class="btn btn-op" data-action="op" data-val="÷">÷</button>
-
-        <!-- Row 3 -->
-        <button class="btn" data-action="num" data-val="4">4</button>
-        <button class="btn" data-action="num" data-val="5">5</button>
-        <button class="btn" data-action="num" data-val="6">6</button>
-        <button class="btn btn-op" data-action="op" data-val="×">×</button>
-
-        <!-- Row 4 -->
-        <button class="btn" data-action="num" data-val="1">1</button>
-        <button class="btn" data-action="num" data-val="2">2</button>
-        <button class="btn" data-action="num" data-val="3">3</button>
-        <button class="btn btn-op" data-action="op" data-val="−">−</button>
-
-        <!-- Row 5 -->
-        <button class="btn btn-zero" data-action="num" data-val="0">0</button>
-        <button class="btn" data-action="num" data-val=".">.</button>
-        <button class="btn btn-op" data-action="op" data-val="+">+</button>
-
-        <!-- Row 6 — full width equals -->
-        <button class="btn btn-eq" data-action="equals" style="grid-column: span 4; height: 62px;">=</button>
-      </div>
-
-      <div class="foot">Israel Adewusi · CSC426 Practical</div>
+      <span class="brand-name">SecureLogin</span>
     </div>
+
+    <div class="card">
+      <h1>Welcome back</h1>
+      <p class="subhead">Sign in to continue to your account.</p>
+
+      <!-- Alert area -->
+      <div class="alert success" id="alert-success">
+        <span class="alert-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+          </svg>
+        </span>
+        <div>
+          <strong>Login successful!</strong><br>
+          <span style="font-weight:400;font-size:13px">Redirecting you to your dashboard…</span>
+        </div>
+      </div>
+
+      <div class="alert error" id="alert-error">
+        <span class="alert-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+        </span>
+        <span id="alert-error-msg">Invalid username or password. Please try again.</span>
+      </div>
+
+      <!-- Username -->
+      <div class="field" id="field-username">
+        <input
+          type="text"
+          id="username"
+          placeholder=" "
+          autocomplete="username"
+          maxlength="40"
+        />
+        <label for="username">Username</label>
+        <div class="field-error" id="err-username">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/><rect x="11" y="8" width="2" height="5" rx="1"/><rect x="11" y="15" width="2" height="2" rx="1"/></svg>
+          <span id="err-username-msg"></span>
+        </div>
+      </div>
+
+      <!-- Password -->
+      <div class="field field-pw" id="field-password">
+        <input
+          type="password"
+          id="password"
+          placeholder=" "
+          autocomplete="current-password"
+          maxlength="64"
+        />
+        <label for="password">Password</label>
+        <button class="pw-toggle" type="button" id="pw-toggle" aria-label="Show password">
+          <svg id="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+            <circle cx="12" cy="12" r="3"/>
+          </svg>
+        </button>
+        <div class="field-error" id="err-password">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/><rect x="11" y="8" width="2" height="5" rx="1"/><rect x="11" y="15" width="2" height="2" rx="1"/></svg>
+          <span id="err-password-msg"></span>
+        </div>
+      </div>
+
+      <!-- Remember -->
+      <div class="remember">
+        <input type="checkbox" id="remember" />
+        <label for="remember">Keep me signed in</label>
+      </div>
+
+      <!-- Buttons -->
+      <div class="btn-row">
+        <button class="btn btn-reset" id="btn-reset">Reset</button>
+        <button class="btn btn-login" id="btn-login">Sign In</button>
+      </div>
+
+      <div class="divider">or</div>
+      <p class="signup-link">Don't have an account? <a href="#">Create one</a></p>
+    </div>
+
+    <p class="footer">CSC426 — Israel Adewusi &nbsp;·&nbsp; AAUA</p>
   </div>
 
   <script>
-    const display = document.getElementById('display');
-    const exprEl  = document.getElementById('expr');
+    // Demo credentials
+    const VALID_USERS = {
+      'israel': 'password123',
+      'admin':  'admin@2026',
+      'demo':   'demo1234',
+    };
 
-    let currentVal  = '0';
-    let expression  = '';
-    let operator    = null;
-    let prevVal     = null;
-    let justEvaled  = false;
+    const usernameInput  = document.getElementById('username');
+    const passwordInput  = document.getElementById('password');
+    const btnLogin       = document.getElementById('btn-login');
+    const btnReset       = document.getElementById('btn-reset');
+    const pwToggle       = document.getElementById('pw-toggle');
+    const eyeIcon        = document.getElementById('eye-icon');
+    const alertSuccess   = document.getElementById('alert-success');
+    const alertError     = document.getElementById('alert-error');
+    const alertErrorMsg  = document.getElementById('alert-error-msg');
 
-    function updateDisplay(val) {
-      display.textContent = val;
-    }
+    // --- Password toggle ---
+    const eyeOpen = `<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>`;
+    const eyeClosed = `<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>`;
 
-    function flash() {
-      display.classList.add('flash');
-      setTimeout(() => display.classList.remove('flash'), 150);
-    }
-
-    function evaluate(a, op, b) {
-      a = parseFloat(a); b = parseFloat(b);
-      switch(op) {
-        case '+':  return a + b;
-        case '−':  return a - b;
-        case '×':  return a * b;
-        case '÷':  return b === 0 ? 'Error' : a / b;
-        case '%':  return a % b;
-        case '^':  return Math.pow(a, b);
-        default:   return b;
-      }
-    }
-
-    function formatResult(val) {
-      if (typeof val === 'string') return val;
-      // Avoid floating point mess
-      let s = parseFloat(val.toPrecision(12)).toString();
-      return s;
-    }
-
-    function handleNum(val) {
-      if (justEvaled) {
-        currentVal = val === '.' ? '0.' : val;
-        expression = '';
-        justEvaled = false;
-      } else {
-        if (val === '.' && currentVal.includes('.')) return;
-        if (currentVal === '0' && val !== '.') {
-          currentVal = val;
-        } else {
-          if (currentVal.length >= 14) return;
-          currentVal += val;
-        }
-      }
-      updateDisplay(currentVal);
-    }
-
-    function handleOp(op) {
-      justEvaled = false;
-      if (operator && prevVal !== null) {
-        // Chain operations
-        let result = evaluate(prevVal, operator, currentVal);
-        result = formatResult(result);
-        flash();
-        expression = result + ' ' + op;
-        prevVal     = result;
-        currentVal  = result;
-        updateDisplay(result);
-      } else {
-        prevVal    = currentVal;
-        expression = currentVal + ' ' + op;
-      }
-      operator   = op;
-      currentVal = '0';
-      exprEl.textContent = expression;
-    }
-
-    function handleEquals() {
-      if (!operator || prevVal === null) return;
-      let result = evaluate(prevVal, operator, currentVal);
-      result = formatResult(result);
-      flash();
-      exprEl.textContent = prevVal + ' ' + operator + ' ' + currentVal + ' =';
-      updateDisplay(result);
-      currentVal = result;
-      operator   = null;
-      prevVal    = null;
-      justEvaled = true;
-    }
-
-    function handleClear() {
-      currentVal = '0';
-      operator   = null;
-      prevVal    = null;
-      expression = '';
-      justEvaled = false;
-      updateDisplay('0');
-      exprEl.textContent = '';
-    }
-
-    function handleBack() {
-      if (justEvaled) { handleClear(); return; }
-      if (currentVal.length <= 1) {
-        currentVal = '0';
-      } else {
-        currentVal = currentVal.slice(0, -1);
-      }
-      updateDisplay(currentVal);
-    }
-
-    // Button click handler
-    document.querySelector('.grid').addEventListener('click', e => {
-      const btn = e.target.closest('.btn');
-      if (!btn) return;
-
-      // Ripple
-      const r = document.createElement('span');
-      r.className = 'ripple';
-      const rect = btn.getBoundingClientRect();
-      r.style.width = r.style.height = Math.max(rect.width, rect.height) + 'px';
-      r.style.left = (e.clientX - rect.left - r.offsetWidth / 2) + 'px';
-      r.style.top  = (e.clientY - rect.top - r.offsetHeight / 2) + 'px';
-      btn.appendChild(r);
-      setTimeout(() => r.remove(), 500);
-
-      const action = btn.dataset.action;
-      const val    = btn.dataset.val;
-
-      if (action === 'num')    handleNum(val);
-      if (action === 'op')     handleOp(val);
-      if (action === 'equals') handleEquals();
-      if (action === 'clear')  handleClear();
-      if (action === 'back')   handleBack();
+    let pwVisible = false;
+    pwToggle.addEventListener('click', () => {
+      pwVisible = !pwVisible;
+      passwordInput.type = pwVisible ? 'text' : 'password';
+      eyeIcon.innerHTML = pwVisible ? eyeClosed : eyeOpen;
     });
 
-    // Keyboard support
-    document.addEventListener('keydown', e => {
-      if ('0123456789.'.includes(e.key))         handleNum(e.key);
-      else if (e.key === '+')                    handleOp('+');
-      else if (e.key === '-')                    handleOp('−');
-      else if (e.key === '*')                    handleOp('×');
-      else if (e.key === '/')  { e.preventDefault(); handleOp('÷'); }
-      else if (e.key === '%')                    handleOp('%');
-      else if (e.key === '^')                    handleOp('^');
-      else if (e.key === 'Enter' || e.key === '=') handleEquals();
-      else if (e.key === 'Backspace')            handleBack();
-      else if (e.key === 'Escape' || e.key === 'c' || e.key === 'C') handleClear();
+    // --- Validation ---
+    function setError(fieldId, errId, errMsgId, message) {
+      document.getElementById(fieldId).classList.add('has-error');
+      const errEl = document.getElementById(errId);
+      errEl.classList.add('visible');
+      document.getElementById(errMsgId).textContent = message;
+    }
+
+    function clearError(fieldId, errId) {
+      document.getElementById(fieldId).classList.remove('has-error');
+      document.getElementById(errId).classList.remove('visible');
+    }
+
+    function validate() {
+      let valid = true;
+      const username = usernameInput.value.trim();
+      const password = passwordInput.value;
+
+      clearError('field-username', 'err-username');
+      clearError('field-password', 'err-password');
+      hideAlerts();
+
+      if (!username) {
+        setError('field-username', 'err-username', 'err-username-msg', 'Username is required.');
+        valid = false;
+      } else if (username.length < 3) {
+        setError('field-username', 'err-username', 'err-username-msg', 'Username must be at least 3 characters.');
+        valid = false;
+      } else if (!/^[a-zA-Z0-9._@-]+$/.test(username)) {
+        setError('field-username', 'err-username', 'err-username-msg', 'Only letters, numbers, and . _ @ - allowed.');
+        valid = false;
+      }
+
+      if (!password) {
+        setError('field-password', 'err-password', 'err-password-msg', 'Password is required.');
+        valid = false;
+      } else if (password.length < 6) {
+        setError('field-password', 'err-password', 'err-password-msg', 'Password must be at least 6 characters.');
+        valid = false;
+      }
+
+      return valid;
+    }
+
+    function hideAlerts() {
+      alertSuccess.classList.remove('show');
+      alertError.classList.remove('show');
+    }
+
+    // Clear error on input
+    usernameInput.addEventListener('input', () => clearError('field-username', 'err-username'));
+    passwordInput.addEventListener('input', () => clearError('field-password', 'err-password'));
+
+    // --- Login ---
+    btnLogin.addEventListener('click', async () => {
+      if (!validate()) return;
+
+      const username = usernameInput.value.trim().toLowerCase();
+      const password = passwordInput.value;
+
+      // Show loading state
+      btnLogin.classList.add('loading');
+      btnLogin.innerHTML = '<span class="spinner"></span>Signing in…';
+
+      // Simulate async auth (500ms)
+      await new Promise(r => setTimeout(r, 900));
+
+      btnLogin.classList.remove('loading');
+      btnLogin.innerHTML = 'Sign In';
+
+      if (VALID_USERS[username] && VALID_USERS[username] === password) {
+        alertSuccess.classList.add('show');
+        alertError.classList.remove('show');
+        usernameInput.disabled = true;
+        passwordInput.disabled = true;
+        btnLogin.disabled = true;
+        btnReset.disabled = true;
+      } else {
+        alertError.classList.add('show');
+        alertSuccess.classList.remove('show');
+        alertErrorMsg.textContent = 'Incorrect username or password. Please try again.';
+        passwordInput.value = '';
+        passwordInput.focus();
+        // Shake animation
+        btnLogin.style.animation = 'none';
+        document.querySelector('.card').style.animation = 'shake 0.4s ease';
+        setTimeout(() => { document.querySelector('.card').style.animation = ''; }, 400);
+      }
+    });
+
+    // --- Reset ---
+    btnReset.addEventListener('click', () => {
+      usernameInput.value = '';
+      passwordInput.value = '';
+      clearError('field-username', 'err-username');
+      clearError('field-password', 'err-password');
+      hideAlerts();
+      usernameInput.focus();
+    });
+
+    // Enter key submits
+    [usernameInput, passwordInput].forEach(el => {
+      el.addEventListener('keydown', e => {
+        if (e.key === 'Enter') btnLogin.click();
+      });
     });
   </script>
+
+  <style>
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      20%      { transform: translateX(-6px); }
+      40%      { transform: translateX(6px); }
+      60%      { transform: translateX(-4px); }
+      80%      { transform: translateX(4px); }
+    }
+  </style>
 </body>
 </html>
